@@ -1,0 +1,35 @@
+%responsive-square {
+  position: relative;
+  &:before {
+    display: block;
+    content: '';
+    padding-top: 100%;
+  }
+}
+
+.color-picker {
+  display: flex;
+
+  .color-swatch {
+    width: 50px;
+    border: 0;
+    margin: 0 5px;
+    @extend %responsive-square;
+  }
+}
+
+.led-matrix {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  max-width: calc(100vh - 110px);
+  margin-top: 20px;
+}
+
+.led {
+  width: calc(12.5% - 2px);
+  flex-shrink: 0;
+  margin: 1px;
+  background-color: black;
+  @extend %responsive-square;
+}
