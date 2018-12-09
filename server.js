@@ -1,5 +1,6 @@
 const express = require('express')
 const path = require('path')
+const {spawn} = require('child_process')
 
 const app = express()
 
@@ -24,6 +25,7 @@ io.on('connection', function(socket) {
   socket.on('colored', (index, color) => {
     socket.broadcast.emit('colored', index, color)
     state.board[index] = color
+    spawn('python', ['./set_led.py', index, color])
   })
 })
 
@@ -33,7 +35,10 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(DIST_DIR, 'index.html'))
 })
 
-http.listen(3000, () => {
+const port = process.env.PORT || 3000
+http.listen(port, () => {
   // eslint-disable-next-line no-console
-  console.log('listening on http://localhost:3000')
+  console.log(`listening on http://localhost:${port}`)
 })
+
+spawn('python', ['./clear_leds.py'])
