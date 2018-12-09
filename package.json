@@ -1,0 +1,36 @@
+{
+  "name": "light-me-up",
+  "version": "1.0.0",
+  "description": "Shared LED array that can connect back to my hardware",
+  "main": "index.js",
+  "author": "Zach Gawlik <ZachGawlik@users.noreply.github.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=10.8.0"
+  },
+  "scripts": {
+    "build": "NODE_ENV=production webpack",
+    "watch": "NODE_ENV=development webpack-dev-server",
+    "format": "prettier --write '**/*.{js,css,md,html}'"
+  },
+  "dependencies": {
+    "express": "^4.16.4"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.2.0",
+    "@babel/preset-env": "^7.2.0",
+    "babel-eslint": "^10.0.1",
+    "babel-loader": "^8.0.4",
+    "clean-webpack-plugin": "^1.0.0",
+    "css-loader": "^2.0.0",
+    "eslint": "^5.10.0",
+    "html-webpack-plugin": "^3.2.0",
+    "node-sass": "^4.10.0",
+    "prettier": "^1.15.3",
+    "sass-loader": "^7.1.0",
+    "style-loader": "^0.23.1",
+    "webpack": "^4.27.1",
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.10"
+  }
+}
