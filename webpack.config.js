@@ -18,7 +18,7 @@ const baseWebpack = {
       },
       {
         test: /\.scss$/,
-        use: ['style-loader', 'css-loader', 'sass-loader'],
+        use: ['style-loader', 'css-loader', 'sass-loader', 'postcss-loader'],
       },
     ],
   },
@@ -35,6 +35,7 @@ if (process.env.NODE_ENV === 'development') {
   baseWebpack.devServer = {
     contentBase: path.join(__dirname, 'dist'),
     compress: true,
+    host: '0.0.0.0', // open up for viewing site on phone
     port: 8001,
     proxy: {
       '/socket.io': {

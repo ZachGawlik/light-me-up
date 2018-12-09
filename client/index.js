@@ -4,10 +4,10 @@ import './led.scss'
 
 const COLORS = [
   'rgb(255,0,0)',
-  'rgb(255,165,0)',
+  'rgb(255,140,0)',
   'rgb(255,255,0)',
-  'rgb(128,128,0)',
   'rgb(255,20,147)',
+  'rgb(128,128,0)',
   'rgb(128,0,0)',
   'rgb(0,255,0)',
   'rgb(0,128,0)',
@@ -23,12 +23,11 @@ const COLORS = [
 
 const socket = io()
 
-const isLeftMouseButton = mouseEvent => mouseEvent.button === 0
-
-let leftClickPressed = false
+let clickPressed = false
 let activeColor = COLORS[0]
 
 const init = () => {
+  const colorPicker = document.body.querySelector('.color-picker')
   const colorSwatches = COLORS.map(color => {
     const swatch = document.createElement('button')
     swatch.className = 'color-swatch'
@@ -36,22 +35,27 @@ const init = () => {
     swatch.style.outlineColor = color
     swatch.addEventListener('click', () => {
       activeColor = color
+      colorPicker.style.borderColor = activeColor
     })
     return swatch
   })
-  document.body.querySelector('.color-swatches').append(...colorSwatches)
+
+  colorPicker.style.borderColor = activeColor
+  colorPicker.append(...colorSwatches)
 
   const leds = [...new Array(64)].map((_, index) => {
     const square = document.createElement('div')
     square.className = 'led'
-    square.addEventListener('click', event => {
-      if (isLeftMouseButton(event)) {
-        socket.emit('colored', index, activeColor)
-        square.style.backgroundColor = activeColor
-      }
+    square.addEventListener('click', () => {
+      socket.emit('colored', index, activeColor)
+      square.style.backgroundColor = activeColor
+    })
+    square.addEventListener('touchmove', () => {
+      socket.emit('colored', index, activeColor)
+      square.style.backgroundColor = activeColor
     })
     square.addEventListener('mousemove', () => {
-      if (leftClickPressed) {
+      if (clickPressed) {
         socket.emit('colored', index, activeColor)
         square.style.backgroundColor = activeColor
       }
@@ -61,15 +65,11 @@ const init = () => {
   document.body.querySelector('.led-matrix').append(...leds)
 }
 
-window.addEventListener('mousedown', event => {
-  if (isLeftMouseButton(event)) {
-    leftClickPressed = true
-  }
+window.addEventListener('mousedown', () => {
+  clickPressed = true
 })
-window.addEventListener('mouseup', event => {
-  if (isLeftMouseButton(event)) {
-    leftClickPressed = false
-  }
+window.addEventListener('mouseup', () => {
+  clickPressed = false
 })
 
 socket.on('initialize', board => {
@@ -83,9 +83,7 @@ socket.on('colored', (count, color) => {
 })
 
 socket.on('user count', count => {
-  document.querySelector(
-    '.count-text'
-  ).innerHTML = `Current # of users: ${count}`
+  document.querySelector('.count-text').innerHTML = `# of users: ${count}`
 })
 
 init()
