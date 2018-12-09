@@ -60,6 +60,12 @@ window.addEventListener('mouseup', event => {
   }
 })
 
+socket.on('initialize', board => {
+  document.querySelectorAll('.led').forEach((square, index) => {
+    square.style.backgroundColor = board[index]
+  })
+})
+
 socket.on('colored', (count, color) => {
   document.body.querySelectorAll('.led')[count].style.backgroundColor = color
 })

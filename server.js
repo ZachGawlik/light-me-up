@@ -6,17 +6,24 @@ const app = express()
 const http = require('http').Server(app)
 const io = require('socket.io')(http)
 
-let userCount = 0
+let state = {
+  userCount: 0,
+  board: Array(64).fill('rgb(0,0,0)'),
+}
+
 io.on('connection', function(socket) {
-  userCount += 1
-  io.emit('user count', userCount)
+  state.userCount += 1
+  io.emit('user count', state.userCount)
+  socket.emit('initialize', state.board)
+
   socket.on('disconnect', function() {
-    userCount -= 1
-    io.emit('user count', userCount)
+    state.userCount -= 1
+    io.emit('user count', state.userCount)
   })
 
   socket.on('colored', (index, color) => {
     socket.broadcast.emit('colored', index, color)
+    state.board[index] = color
   })
 })
 
