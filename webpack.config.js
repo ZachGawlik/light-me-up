@@ -35,7 +35,7 @@ if (process.env.NODE_ENV === 'development') {
   baseWebpack.devServer = {
     contentBase: path.join(__dirname, 'dist'),
     compress: true,
-    port: 9000,
+    port: 8001,
     proxy: {
       '/socket.io': {
         target: 'http://localhost:3000',

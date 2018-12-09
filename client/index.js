@@ -3,11 +3,21 @@ import './base.scss'
 import './led.scss'
 
 const COLORS = [
-  'rgb(255,179,186)',
-  'rgb(255,223,186)',
-  'rgb(255,255,186)',
-  'rgb(186,255,201)',
-  'rgb(186,225,255)',
+  'rgb(255,0,0)',
+  'rgb(255,165,0)',
+  'rgb(255,255,0)',
+  'rgb(128,128,0)',
+  'rgb(255,20,147)',
+  'rgb(128,0,0)',
+  'rgb(0,255,0)',
+  'rgb(0,128,0)',
+  'rgb(0,255,255)',
+  'rgb(0,128,128)',
+  'rgb(0,0,255)',
+  'rgb(0,0,128)',
+  'rgb(255,0,255)',
+  'rgb(128,0,128)',
+  'rgb(80,80,80)',
   'rgb(0,0,0)',
 ]
 
@@ -19,15 +29,17 @@ let leftClickPressed = false
 let activeColor = COLORS[0]
 
 const init = () => {
-  document.querySelectorAll('button.color-swatch').forEach((b, index) => {
-    const color = COLORS[index]
-    b.dataset.color = color
-    b.style.backgroundColor = color
-    b.style.outlineColor = color
-    b.addEventListener('click', () => {
+  const colorSwatches = COLORS.map(color => {
+    const swatch = document.createElement('button')
+    swatch.className = 'color-swatch'
+    swatch.style.backgroundColor = color
+    swatch.style.outlineColor = color
+    swatch.addEventListener('click', () => {
       activeColor = color
     })
+    return swatch
   })
+  document.body.querySelector('.color-swatches').append(...colorSwatches)
 
   const leds = [...new Array(64)].map((_, index) => {
     const square = document.createElement('div')
@@ -71,7 +83,9 @@ socket.on('colored', (count, color) => {
 })
 
 socket.on('user count', count => {
-  document.querySelector('.user-count').innerHTML = count - 1
+  document.querySelector(
+    '.count-text'
+  ).innerHTML = `Current # of users: ${count}`
 })
 
 init()
