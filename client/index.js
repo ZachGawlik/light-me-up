@@ -1,3 +1,4 @@
+import io from 'socket.io-client'
 import './base.scss'
 import './led.scss'
 
@@ -9,6 +10,8 @@ const COLORS = [
   'rgb(186,225,255)',
   'rgb(0,0,0)',
 ]
+
+const socket = io()
 
 const isLeftMouseButton = mouseEvent => mouseEvent.button === 0
 
@@ -26,16 +29,18 @@ const init = () => {
     })
   })
 
-  const leds = [...new Array(64)].map(() => {
+  const leds = [...new Array(64)].map((_, index) => {
     const square = document.createElement('div')
     square.className = 'led'
     square.addEventListener('click', event => {
       if (isLeftMouseButton(event)) {
+        socket.emit('colored', index, activeColor)
         square.style.backgroundColor = activeColor
       }
     })
     square.addEventListener('mousemove', () => {
       if (leftClickPressed) {
+        socket.emit('colored', index, activeColor)
         square.style.backgroundColor = activeColor
       }
     })
@@ -53,6 +58,14 @@ window.addEventListener('mouseup', event => {
   if (isLeftMouseButton(event)) {
     leftClickPressed = false
   }
+})
+
+socket.on('colored', (count, color) => {
+  document.body.querySelectorAll('.led')[count].style.backgroundColor = color
+})
+
+socket.on('user count', count => {
+  document.querySelector('.user-count').innerHTML = count - 1
 })
 
 init()

@@ -36,6 +36,12 @@ if (process.env.NODE_ENV === 'development') {
     contentBase: path.join(__dirname, 'dist'),
     compress: true,
     port: 9000,
+    proxy: {
+      '/socket.io': {
+        target: 'http://localhost:3000',
+        ws: true,
+      },
+    },
   }
 }
 
