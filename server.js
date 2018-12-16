@@ -25,7 +25,9 @@ io.on('connection', function(socket) {
   socket.on('colored', (index, color) => {
     socket.broadcast.emit('colored', index, color)
     state.board[index] = color
-    spawn('python', ['./set_led.py', index, color])
+    if (process.env.CONNECTED) {
+      spawn('python', ['./set_led.py', index, color])
+    }
   })
 })
 
@@ -41,4 +43,6 @@ http.listen(port, () => {
   console.log(`listening on http://localhost:${port}`)
 })
 
-spawn('python', ['./clear_leds.py'])
+if (process.env.CONNECTED) {
+  spawn('python', ['./clear_leds.py'])
+}
