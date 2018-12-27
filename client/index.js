@@ -3,22 +3,22 @@ import './base.scss'
 import './led.scss'
 
 const COLORS = [
-  'rgb(255,0,0)',
-  'rgb(255,140,0)',
-  'rgb(255,255,0)',
-  'rgb(255,20,147)',
-  'rgb(128,128,0)',
-  'rgb(128,0,0)',
-  'rgb(0,255,0)',
-  'rgb(0,128,0)',
-  'rgb(0,255,255)',
-  'rgb(0,128,128)',
-  'rgb(0,0,255)',
-  'rgb(0,0,128)',
-  'rgb(255,0,255)',
-  'rgb(128,0,128)',
-  'rgb(80,80,80)',
-  'rgb(0,0,0)',
+  'rgb(255, 0, 0)',
+  'rgb(255, 140, 0)',
+  'rgb(255, 255, 0)',
+  'rgb(255, 20, 147)',
+  'rgb(128, 128, 0)',
+  'rgb(128, 0, 0)',
+  'rgb(0, 255, 0)',
+  'rgb(0, 128, 0)',
+  'rgb(0, 255, 255)',
+  'rgb(0, 128, 128)',
+  'rgb(0, 0, 255)',
+  'rgb(0, 0, 128)',
+  'rgb(255, 0, 255)',
+  'rgb(128, 0, 128)',
+  'rgb(80, 80, 80)',
+  'rgb(0, 0, 0)',
 ]
 
 const socket = io()
@@ -45,19 +45,24 @@ const init = () => {
 
   const leds = [...new Array(64)].map((_, index) => {
     const square = document.createElement('div')
+
+    const setColor = (index, activeColor) => {
+      if (square.style.backgroundColor !== activeColor) {
+        socket.emit('colored', index, activeColor)
+        square.style.backgroundColor = activeColor
+      }
+    }
+
     square.className = 'led'
     square.addEventListener('click', () => {
-      socket.emit('colored', index, activeColor)
-      square.style.backgroundColor = activeColor
+      setColor(index, activeColor)
     })
     square.addEventListener('touchmove', () => {
-      socket.emit('colored', index, activeColor)
-      square.style.backgroundColor = activeColor
+      setColor(index, activeColor)
     })
     square.addEventListener('mousemove', () => {
       if (clickPressed) {
-        socket.emit('colored', index, activeColor)
-        square.style.backgroundColor = activeColor
+        setColor(index, activeColor)
       }
     })
     return square
