@@ -26,49 +26,97 @@ const socket = io()
 let clickPressed = false
 let activeColor = COLORS[0]
 
-const init = () => {
+const setLed = index => {
+  const square = document.querySelectorAll('.led')[index]
+  if (square.style.backgroundColor !== activeColor) {
+    socket.emit('colored', index, activeColor)
+    square.style.backgroundColor = activeColor
+  }
+}
+
+const setActiveColor = newActiveColor => {
   const colorPicker = document.body.querySelector('.color-picker')
+  activeColor = newActiveColor
+  colorPicker.style.borderColor = newActiveColor
+}
+
+const init = () => {
   const colorSwatches = COLORS.map(color => {
     const swatch = document.createElement('button')
     swatch.className = 'color-swatch'
     swatch.style.backgroundColor = color
     swatch.style.outlineColor = color
+    swatch.dataset.color = color
+    swatch.addEventListener('touchstart', e => {
+      e.preventDefault() // prevent highlighting when initiating touch
+      setActiveColor(color)
+    })
     swatch.addEventListener('click', () => {
-      activeColor = color
-      colorPicker.style.borderColor = activeColor
+      setActiveColor(color)
     })
     return swatch
   })
 
+  const colorPicker = document.body.querySelector('.color-picker')
   colorPicker.style.borderColor = activeColor
   colorPicker.append(...colorSwatches)
 
   const leds = [...new Array(64)].map((_, index) => {
     const square = document.createElement('div')
-
-    const setColor = (index, activeColor) => {
-      if (square.style.backgroundColor !== activeColor) {
-        socket.emit('colored', index, activeColor)
-        square.style.backgroundColor = activeColor
-      }
-    }
-
     square.className = 'led'
+
     square.addEventListener('click', () => {
-      setColor(index, activeColor)
+      setLed(index)
     })
-    square.addEventListener('touchmove', () => {
-      setColor(index, activeColor)
+    square.addEventListener('touchstart', e => {
+      e.preventDefault() // prevent highlighting when initiating touch
+      setLed(index)
     })
     square.addEventListener('mousemove', () => {
       if (clickPressed) {
-        setColor(index, activeColor)
+        setLed(index)
       }
     })
     return square
   })
   document.body.querySelector('.led-matrix').append(...leds)
 }
+
+document.addEventListener(
+  'touchstart',
+  e => {
+    e.preventDefault() // prevent double-tap to zoom
+  },
+  {passive: false}
+)
+
+document.addEventListener(
+  'touchmove',
+  e => {
+    e.preventDefault() // prevent pinch to zoom
+
+    const currentTouchLocation = event.touches[0]
+    const touchTarget = document.elementFromPoint(
+      currentTouchLocation.clientX,
+      currentTouchLocation.clientY
+    )
+
+    // touchTarget is null when dragging outside of window
+    if (!touchTarget) {
+      return
+    }
+
+    if (touchTarget.className === 'led') {
+      const ledIndex = [...document.querySelectorAll('.led')].indexOf(
+        touchTarget
+      )
+      setLed(ledIndex)
+    } else if (touchTarget.className === 'color-swatch') {
+      setActiveColor(touchTarget.dataset.color)
+    }
+  },
+  {passive: false}
+)
 
 window.addEventListener('mousedown', () => {
   clickPressed = true
@@ -83,8 +131,8 @@ socket.on('initialize', board => {
   })
 })
 
-socket.on('colored', (count, color) => {
-  document.body.querySelectorAll('.led')[count].style.backgroundColor = color
+socket.on('colored', (index, color) => {
+  document.body.querySelectorAll('.led')[index].style.backgroundColor = color
 })
 
 socket.on('user count', count => {
