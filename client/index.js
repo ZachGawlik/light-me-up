@@ -118,11 +118,17 @@ document.addEventListener(
   {passive: false}
 )
 
-window.addEventListener('mousedown', () => {
-  clickPressed = true
+const LEFT_CLICK_FLAG = 1
+
+window.addEventListener('mousedown', e => {
+  if (e.which === LEFT_CLICK_FLAG) {
+    clickPressed = true
+  }
 })
-window.addEventListener('mouseup', () => {
-  clickPressed = false
+window.addEventListener('mouseup', e => {
+  if (e.which === LEFT_CLICK_FLAG) {
+    clickPressed = false
+  }
 })
 
 socket.on('initialize', board => {
