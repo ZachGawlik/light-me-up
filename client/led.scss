@@ -12,13 +12,27 @@
   flex-wrap: wrap;
   border: 5px solid black;
   padding: 5px;
+  margin-bottom: 20px;
+  width: calc(35px * 8 + 20px);
+
+  @media screen and (min-width: 375px) {
+    width: calc(40px * 8 + 20px);
+  }
+
+  @media screen and (min-width: 700px) {
+    width: calc(40px * 16 + 20px);
+  }
 
   .color-swatch {
-    width: 50px;
+    width: calc(12.5% - 2px);
     flex-shrink: 0;
     border: 0;
     margin: 1px;
     @extend %responsive-square;
+
+    @media screen and (min-width: 700px) {
+      width: calc(6.25% - 2px);
+    }
   }
 }
 
@@ -26,8 +40,10 @@
   width: 100%;
   display: flex;
   flex-wrap: wrap;
-  max-width: calc(100vh - 300px);
-  margin-top: 20px;
+  max-width: calc(100vh - 139px - 60px);
+  @media screen and (min-width: 700px) {
+    max-width: calc(100vh - 119px - 60px);
+  }
 }
 
 .led {
